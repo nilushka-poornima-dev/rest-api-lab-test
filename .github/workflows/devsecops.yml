@@ -1,0 +1,105 @@
+name: AWS DevSecOps Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-secure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        working-directory: ousl-project
+
+    steps:
+
+      # --------------------------------
+      # 1. Checkout Source Code
+      # --------------------------------
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # --------------------------------
+      # 2. Setup Java 17
+      # --------------------------------
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # --------------------------------
+      # 3. SonarCloud SAST Scan
+      # --------------------------------
+      - name: SonarCloud SAST Scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn verify sonar:sonar \
+            -Dsonar.projectKey=ousl-student-service || true
+
+      # --------------------------------
+      # 4. Verify JAR File
+      # --------------------------------
+      - name: Verify JAR File
+        run: |
+          echo "Checking generated JAR files..."
+          ls -lh target/*.jar
+
+      # --------------------------------
+      # 5. Build Docker Image
+      # --------------------------------
+      - name: Build Container
+        run: |
+          docker build -t lab-test-api:${{ github.sha }} .
+
+      # --------------------------------
+      # 6. Trivy Security Scan
+      # --------------------------------
+      - name: Aqua Security Trivy Scan
+        uses: aquasecurity/trivy-action@v0.35.0
+        with:
+          image-ref: 'lab-test-api:${{ github.sha }}'
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL'
+
+      # --------------------------------
+      # 7. Configure AWS Credentials
+      # --------------------------------
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      # --------------------------------
+      # 8. Login to Amazon ECR
+      # --------------------------------
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # --------------------------------
+      # 9. Push Container Image to ECR
+      # --------------------------------
+      - name: Push Container Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker tag lab-test-api:${{ github.sha }} \
+            $ECR_REGISTRY/lab-test-api:${{ github.sha }}
+
+          docker push \
+            $ECR_REGISTRY/lab-test-api:${{ github.sha }}
