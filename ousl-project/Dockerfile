@@ -1,5 +1,5 @@
 # ==========================================
-# Multi-Stage Dockerfile for Bookstore App
+# Multi-Stage Dockerfile for StudentManagement App
 # ==========================================
 
 # Stage 1: Build stage
@@ -27,16 +27,12 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
 
 # Copy built JAR
-COPY --from=builder /workspace/target/bookstore-app.jar app.jar
+COPY --from=builder /workspace/target/student-app.jar app.jar
 RUN chown -R appuser:appgroup /app
 
 USER appuser
 
-ENV PORT=8080
-ENV DB_HOST=localhost
-ENV DB_USER=postgres
-ENV DB_PASS=OuslCloudPass2026!
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom"
+
 
 EXPOSE 8080
 
