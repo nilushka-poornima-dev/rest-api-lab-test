@@ -16,10 +16,10 @@ import java.util.List;
 
 // 1. MAIN APPLICATION & WEB CONFIGURATION
 @SpringBootApplication
-public class BookstoreApplication implements WebMvcConfigurer {
+public class StudentApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {
-        SpringApplication.run(BookstoreApplication.class, args);
+        SpringApplication.run(StudentApplication.class, args);
     }
 
     @Override
