@@ -1,0 +1,37 @@
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+.table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: #64748b;
+  padding: 1rem 0.75rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.table td {
+  padding: 0.85rem 0.75rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.badge-category {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 0.35em 0.65em;
+  border-radius: 6px;
+}
+
+.modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
