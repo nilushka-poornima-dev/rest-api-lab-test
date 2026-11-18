@@ -61,7 +61,7 @@ jobs:
       # --------------------------------
       - name: Build Container
         run: |
-          docker build -t lab-test-api:${{ github.sha }} .
+          docker build -t labtest-api:${{ github.sha }} .
 
       # --------------------------------
       # 6. Trivy Security Scan
@@ -69,7 +69,7 @@ jobs:
       - name: Aqua Security Trivy Scan
         uses: aquasecurity/trivy-action@v0.35.0
         with:
-          image-ref: 'lab-test-api:${{ github.sha }}'
+          image-ref: 'labtest-api:${{ github.sha }}'
           format: 'table'
           exit-code: '0'
           severity: 'CRITICAL'
@@ -98,8 +98,8 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker tag lab-test-api:${{ github.sha }} \
-            $ECR_REGISTRY/lab-test-api:${{ github.sha }}
+          docker tag labtest-api:${{ github.sha }} \
+            $ECR_REGISTRY/labtest-api:${{ github.sha }}
 
           docker push \
-            $ECR_REGISTRY/lab-test-api:${{ github.sha }}
+            $ECR_REGISTRY/labtest-api:${{ github.sha }}
