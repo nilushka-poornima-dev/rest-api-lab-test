@@ -1,5 +1,5 @@
-com\bookstore\Book.class
+com\bookstore\StudentRepository.class
+com\bookstore\StudentController.class
+com\bookstore\Student.class
 com\bookstore\BookstoreApplication.class
-com\bookstore\BookService.class
-com\bookstore\BookRepository.class
-com\bookstore\BookController.class
+com\bookstore\StudentService.class
